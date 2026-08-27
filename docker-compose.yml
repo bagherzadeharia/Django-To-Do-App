@@ -1,0 +1,13 @@
+# version: "29.5"
+
+services:
+  to-do-app-backend:
+    build: .
+    container_name: to-do-app-backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./core:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
