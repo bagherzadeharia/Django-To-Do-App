@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لیست کارها | To-Do</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" integrity="sha512-QeR2VH+lsBE5LSAe1Q5EnTBbe7XTBubt8dG93Y7gidSgdMCr8nVqKcfKAMyN96SV8KDbZVTDXChatu5G2KQGzg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* افکت دایره‌های تزئینی */
+        body::before,
+        body::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+        }
+        body::before {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+            background: rgba(108, 99, 255, 0.25);
+        }
+        body::after {
+            width: 400px;
+            height: 400px;
+            bottom: -150px;
+            right: -150px;
+            background: rgba(0, 210, 255, 0.15);
+        }
+
+        .app-container {
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* کارت اصلی */
+        .todo-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            padding: 30px 25px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .todo-card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* هدر */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .app-title {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c63ff, #00d2ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* فرم اضافه کردن کار */
+        .add-task-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .add-task-form input {
+            flex: 1;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            font-size: 15px;
+            color: #ffffff;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+        }
+
+        .add-task-form input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .add-task-form input:focus {
+            border-color: #6c63ff;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .add-task-form button {
+            padding: 14px 25px;
+            background: linear-gradient(135deg, #6c63ff 0%, #00d2ff 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s, opacity 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+            white-space: nowrap;
+        }
+
+        .add-task-form button:hover {
+            opacity: 0.95;
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.6);
+        }
+
+        .add-task-form button:active {
+            transform: scale(0.98);
+        }
+
+        /* فیلترها */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .filter-btn.active {
+            background: rgba(108, 99, 255, 0.3);
+            border-color: #6c63ff;
+            color: #fff;
+        }
+
+        /* لیست کارها */
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            transition: background 0.3s, transform 0.2s, border-color 0.3s;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .task-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #6c63ff;
+            flex-shrink: 0;
+        }
+
+        .task-title {
+            flex: 1;
+            color: #ffffff;
+            font-size: 16px;
+            transition: color 0.3s, text-decoration 0.3s;
+        }
+
+        .task-item.completed .task-title {
+            color: rgba(255, 255, 255, 0.4);
+            text-decoration: line-through;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.3s, transform 0.2s;
+        }
+
+        .delete-btn:hover {
+            color: #ff6b6b;
+            transform: scale(1.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 30px 0;
+        }
+
+        /* شمارنده */
+        .task-count {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+
+        /* انیمیشن */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ریسپانسیو */
+        @media (max-width: 600px) {
+            .todo-card {
+                padding: 20px 15px;
+            }
+            .add-task-form {
+                flex-direction: column;
+            }
+            .add-task-form button {
+                width: 100%;
+            }
+            .app-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="todo-card">
+            <div class="app-header">
+                <div class="app-title">📋 لیست کارها</div>
+                <div class="user-info">
+                    <div class="user-avatar">ع</div>
+                    <form action="{% url 'accounts:logout' %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn">خروج</button>
+                    </form>
+                </div>
+            </div>
+            <form class="add-task-form" id="addTaskForm" action="{% url 'todo:create' %}" method="POST">
+                {% csrf_token %}
+                <input type="text" id="title" name="title" placeholder="کار جدید را وارد کنید..." required>
+                <button type="submit">+ افزودن</button>
+            </form>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">همه</button>
+                <button class="filter-btn" data-filter="active">فعال</button>
+                <button class="filter-btn" data-filter="completed">کامل شده</button>
+            </div>
+            <ul class="task-list" id="taskList">
+                {% for task in completed_tasks %}
+                    <li class="task-item completed" data-status="active">
+                        <a href="{% url 'todo:check' id=task.id %}">
+                            <i class="fa-solid fa-square-check"></i>
+                        </a>
+                        <span class="task-title">{{ task.title }}
+                        </span>
+                        <a href="{% url 'todo:edit' pk=task.id %}" class="delete-btn">
+                            <i class="fa-solid fa-edit"></i>
+                        </a>
+                        <a href="{% url 'todo:delete' id=task.id %}" class="delete-btn">
+                            <i class="fa-solid fa-x"></i>
+                        </a>
+                    </li>
+                {% endfor %}
+                {% for task in incomplete_tasks %}
+                    <li class="task-item" data-status="active">
+                        <!--<input type="checkbox" class="task-checkbox">-->
+                        <a href="{% url 'todo:check' id=task.id %}">
+                            <i class="fa-regular fa-square-check"></i>
+                        </a>
+                        <span class="task-title">{{ task.title }}</span>
+                        <a href="{% url 'todo:edit' pk=task.id %}" class="delete-btn">
+                            <i class="fa-solid fa-edit"></i>
+                        </a>
+                        <a href="{% url 'todo:delete' id=task.id %}" class="delete-btn">
+                            <i class="fa-solid fa-x"></i>
+                        </a>
+                    </li>
+                {% endfor %}
+                <!--<li class="task-item completed" data-status="completed">-->
+                <!--    <input type="checkbox" class="task-checkbox" checked>-->
+                <!--    <span class="task-title">تماس با مشتری</span>-->
+                <!--    <a href="" class="delete-btn">×</a>-->
+                <!--</li>-->
+            </ul>
+
+            <!-- شمارنده کارهای باقی‌مانده -->
+            <div class="task-count" id="taskCount">
+                ۲ کار فعال باقی مانده
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // این اسکریپت فقط برای تعامل فرانت‌اند است و بعداً می‌توانید با جنگو جایگزین کنید
+        const taskList = document.getElementById('taskList');
+        const addTaskForm = document.getElementById('addTaskForm');
+        const taskInput = document.getElementById('taskInput');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const taskCount = document.getElementById('taskCount');
+
+        let currentFilter = 'all';
+
+        // حذف کار
+        taskList.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-btn')) {
+                e.target.closest('.task-item').remove();
+                updateCount();
+                applyFilter();
+            }
+        });
+
+        // تیک زدن کار
+        taskList.addEventListener('change', function(e) {
+            if (e.target.classList.contains('task-checkbox')) {
+                const item = e.target.closest('.task-item');
+                if (e.target.checked) {
+                    item.classList.add('completed');
+                    item.setAttribute('data-status', 'completed');
+                } else {
+                    item.classList.remove('completed');
+                    item.setAttribute('data-status', 'active');
+                }
+                updateCount();
+                applyFilter();
+            }
+        });
+
+        // فیلترها
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.getAttribute('data-filter');
+                applyFilter();
+            });
+        });
+
+        function applyFilter() {
+            const items = taskList.querySelectorAll('.task-item');
+            items.forEach(item => {
+                const status = item.getAttribute('data-status');
+                if (currentFilter === 'all' || status === currentFilter) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function updateCount() {
+            const activeItems = taskList.querySelectorAll('.task-item:not(.completed)').length;
+            taskCount.textContent = `${activeItems} کار فعال باقی مانده`;
+        }
+
+        // مقداردهی اولیه
+        updateCount();
+    </script>
+</body>
+</html>
