@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ویرایش کار | To-Do</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
-        }
+{% extends 'base.html' %}
+{% load static %}
 
+{% block internalStyle %}
+    <style>
         body {
             background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
             min-height: 100vh;
@@ -191,8 +181,9 @@
             }
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <div class="edit-card">
         <h2>ویرایش کار</h2>
         <form action="{% url 'todo:edit' pk=task.id %}" method="post" id="editForm">
@@ -207,5 +198,4 @@
             </div>
         </form>
     </div>
-</body>
-</html>
+{% endblock %}

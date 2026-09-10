@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ورود | To-Do</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
-        }
+{% extends 'base.html' %}
+{% load static %}
 
+{% block internalStyle %}
+    <style>
         body {
             background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
             min-height: 100vh;
@@ -200,8 +190,9 @@
             }
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <div class="login-card">
         <h2>ورود به حساب</h2>
         <p class="subtitle">به اپلیکیشن To-Do خوش آمدید</p>
@@ -227,5 +218,4 @@
             حساب کاربری ندارید؟ <a href="{% url 'accounts:signup' %}">ثبت‌نام کنید</a>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}
