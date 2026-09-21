@@ -9,6 +9,7 @@ class TaskAdmin(admin.ModelAdmin):
     )
     fields = (
         'title',
+        'user',
         'complete',
     )
 

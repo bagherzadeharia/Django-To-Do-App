@@ -3,6 +3,7 @@ from typing import override
 from todo.models import Task
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.base import TemplateView, RedirectView
@@ -19,7 +20,9 @@ class ToDoListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user_tasks = Task.objects.all()
+        user_tasks = Task.objects.filter(
+            user=self.request.user
+        )
         context['incomplete_tasks'] = user_tasks.filter(complete=False)
         context['completed_tasks'] = user_tasks.filter(complete=True)
         context['total_tasks'] = user_tasks.count()
@@ -53,6 +56,20 @@ class ToDoEditView(LoginRequiredMixin, UpdateView):
     #     task = get_object_or_404(Task, id=kwargs['id'])
     #     context['task'] = Task
     #     return context
+
+    def get(self, request, *args, **kwargs):
+        task = get_object_or_404(Task, id=kwargs['pk'])
+        if request.user != task.user:
+            raise PermissionDenied("Access Denied")
+        else:
+            return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        task = get_object_or_404(Task, id=kwargs['pk'])
+        if request.user != task.user:
+            raise PermissionDenied("Access Denied")
+        else:
+            return super().post(request, *args, **kwargs)
 
 class ToDoDeleteView(LoginRequiredMixin, DeleteView):
     login_url = '/accounts/login'
