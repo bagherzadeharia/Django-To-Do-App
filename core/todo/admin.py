@@ -5,6 +5,7 @@ class TaskAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'title',
+        'user',
         'complete',
     )
     fields = (

@@ -11,6 +11,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 RUN groupadd -r admin && useradd -r -g admin -d /app -s /sbin/nologin admin
 
 COPY requirements.txt /app/
+
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
@@ -21,5 +22,7 @@ RUN chown -R admin:admin /opt/venv
 USER admin
 
 EXPOSE 8000
+
+# ENTRYPOINT ["python", "/entrypoint.py"]
 
 CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
