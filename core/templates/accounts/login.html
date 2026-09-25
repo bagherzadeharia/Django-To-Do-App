@@ -197,8 +197,9 @@
         <h2>ورود به حساب</h2>
         <p class="subtitle">به اپلیکیشن To-Do خوش آمدید</p>
 
-        <form action="{% url 'accounts:login' %}" method="POST">
+        <form action="{% url 'accounts:login' %}?next={{ request.GET.next }}" method="POST">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}"/>
             <div class="form-group">
                 <label for="email">نام کاربری یا ایمیل</label>
                 <input type="email" id="username" name="username" placeholder="alireza@example.com" required>

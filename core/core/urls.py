@@ -18,15 +18,35 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from rest_framework.permissions import AllowAny
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from drf_yasg.renderers import SwaggerJSONRenderer
+# from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
+schemaView = get_schema_view(
+    openapi.Info(
+        title="To-Do App API",
+        default_version='v1',
+        description="Testing the API of my Project",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@snippets.local"),
+        license=openapi.License(name="Apache License v2.0"),
+    ),
+    public=True,
+    permission_classes=[AllowAny]
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('', include('todo.urls')),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    # path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path("swagger/output.json", schemaView.as_view(renderer_classes=[SwaggerJSONRenderer]), name="schema-json"),
+    path("swagger/", schemaView.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
+    path("redoc/", schemaView.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]
 
 if settings.DEBUG:

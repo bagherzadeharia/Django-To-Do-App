@@ -42,8 +42,9 @@ INSTALLED_APPS = [
     'accounts',
     'todo',
     'rest_framework',
-    'drf_spectacular',
+    # 'drf_spectacular',
     'django_filters',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -137,7 +138,6 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
 
 # REST Framework settings
 # https://www.django-rest-framework.org/api-guide/requests/

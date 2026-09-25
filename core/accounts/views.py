@@ -1,10 +1,11 @@
+from typing import override
 from accounts.models import User
-from accounts.forms import UserLoginForm, UserSignUpForm
 from django.urls import reverse_lazy
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
 from django.views.generic.edit import FormView
 from django.contrib.auth.views import LoginView
+from accounts.forms import UserLoginForm, UserSignUpForm
 
 class UserLoginView(LoginView):
     template_name = "accounts/login.html"
@@ -12,7 +13,11 @@ class UserLoginView(LoginView):
     redirect_authenticated_user = True
 
     def get_success_url(self):
-        return reverse_lazy("todo:list")
+        next_url = self.request.POST.get('next') or self.request.GET.get('next')
+        if next_url:
+            return next_url
+        else:
+            return reverse_lazy("todo:list")
 
 class UserSignUpView(FormView):
     model = User
