@@ -1,3 +1,4 @@
+from accounts.models import User
 from rest_framework import serializers
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -12,3 +13,14 @@ class RegistrationSerializer(serializers.ModelSerializer):
             )
 
         return super().validate(attrs)
+
+    def create(self, validated_data):
+        validated_data.pop('password1')
+        return User.objects.create(**validated_data)
+
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'password1']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }

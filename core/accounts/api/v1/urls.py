@@ -3,4 +3,6 @@ from django.urls import path, include
 
 app_name = 'api-v1'
 
-urlpatterns = []
+urlpatterns = [
+    path('registration', RegistrationAPIView.as_view(), name='registration'),
+]
