@@ -3,8 +3,9 @@ attrs==26.1.0
 Django==5.2.15
 django-filter==26.1
 djangorestframework==3.18.1
+djangorestframework_simplejwt==5.5.1
 drf-spectacular==0.30.0
-drf-yasg[validator]==1.21.15
+drf-yasg==1.21.15
 gunicorn==26.2.0
 importlib_resources==7.1.0
 inflection==0.5.1
@@ -13,6 +14,7 @@ jsonschema-specifications==2025.9.1
 Markdown==3.10.3
 packaging==26.3
 pillow==12.3.0
+PyJWT==2.15.1
 python-decouple==3.8
 pytz==2026.4
 PyYAML==6.0.3
