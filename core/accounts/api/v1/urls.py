@@ -5,4 +5,5 @@ app_name = 'api-v1'
 
 urlpatterns = [
     path('registration', RegistrationAPIView.as_view(), name='registration'),
+    path('change-password', ChangePasswordAPIView.as_view(), name='registration'),
 ]
