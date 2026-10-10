@@ -9,6 +9,7 @@ class UserAdmin(BaseUserAdmin):
         'email',
         'is_staff',
         'is_active',
+        'is_verified',
         'is_superuser',
     )
     list_filter = (
@@ -16,6 +17,7 @@ class UserAdmin(BaseUserAdmin):
         'email',
         'is_staff',
         'is_active',
+        'is_verified',
         'is_superuser',
     )
     search_fields = (
@@ -43,6 +45,7 @@ class UserAdmin(BaseUserAdmin):
                 'fields': (
                     'is_staff',
                     'is_active',
+                    'is_verified',
                     'is_superuser',
                 ),
             },
@@ -79,6 +82,7 @@ class UserAdmin(BaseUserAdmin):
                     'password2',
                     'is_staff',
                     'is_active',
+                    'is_verified',
                     'is_superuser',
                 ),
             }
