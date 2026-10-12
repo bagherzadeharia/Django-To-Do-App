@@ -1,18 +1,17 @@
-import jwt
-from django.conf import settings
 from accounts.models import User
 from rest_framework import status
 from mail_templated import EmailMessage
 from rest_framework.views import APIView
 from accounts.api.v1.serializers import *
+from accounts.api.utils import EmailThread
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 
 class RegistrationAPIView(GenericAPIView):
     serializer_class = RegistrationSerializer
@@ -160,5 +159,26 @@ class UserVerificationConfirmView(APIView):
             )
 
 class UserVerificationEmailResendView(APIView):
-    def get(self, request, token, *args, **kwargs):
-        pass
+    serializer_class = UserVerificationEmailSerializer
+
+    def _get_token(self, user):
+        token = RefreshToken.for_user(user)
+        return token.access_token
+
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['email'] = request.user.email
+        serializer = self.serializer_class(data=data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        userVerificationToken = self._get_token(user)
+        activationEmail = EmailMessage(
+            'email/verification-email.tpl',
+            {
+                'token': userVerificationToken
+            },
+            'admin@admin.com',
+            [user.email]
+        )
+        EmailThread(activationEmail).start()
+        return Response({"details": 'Activation email has been sent to your email address'}, status=status.HTTP_200_OK)

@@ -1,3 +1,5 @@
+from rest_framework.generics import get_object_or_404
+
 from accounts.models import User
 from django.core import exceptions
 from django.contrib.auth import authenticate
@@ -82,9 +84,9 @@ class DjangoAuthTokenSerializer(serializers.Serializer):
                 msg = _('Unable to log in with provided credentials.')
                 raise serializers.ValidationError(msg, code='authorization')
 
-            # if not user.is_verified:
-            #     msg = _('User is not verified.')
-            #     raise serializers.ValidationError(msg, status=status.HTTP_400_BAD_REQUEST)
+            if not user.is_verified:
+                msg = _('User is not verified.')
+                raise serializers.ValidationError(msg, status=status.HTTP_400_BAD_REQUEST)
 
         else:
             msg = _('Must include "username" and "password".')
@@ -99,3 +101,30 @@ class SimpleJWTSerializer(TokenObtainPairSerializer):
         validated_data['email'] = self.user.email
         validated_data['user_id'] = self.user.id
         return validated_data
+
+class UserVerificationEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate(self, attrs):
+        try:
+            email = attrs.get('email')
+            userObject = User.objects.get(
+                email=email
+            )
+        except User.DoesNotExist:
+            raise serializers.ValidationError(
+                {
+                    'details': 'User does not exist',
+                }
+            )
+
+        if userObject.is_verified:
+            raise serializers.ValidationError(
+                {
+                    'details': 'User is already activated & verified',
+                }
+            )
+        else:
+            attrs['user'] = userObject
+            attrs['email'] = email
+            return super().validate(attrs)
