@@ -6,7 +6,9 @@ app_name = 'api-v1'
 
 urlpatterns = [
     path('registration/', RegistrationAPIView.as_view(), name='registration'),
-    path('change-password/', ChangePasswordAPIView.as_view(), name='registration'),
+    path('change-password/', ChangePasswordAPIView.as_view(), name='change-password'),
+    path('forget-password/', ForgetPasswordAPIView.as_view(), name='forget-password'),
+    path('forget-password/confirm/<str:token>', ForgetPasswordConfirmAPIView.as_view(), name='forget-password-confirm'),
     path('token/login/', DjangoAuthTokenView.as_view(), name='token-login'),
     path('token/logout/', DjangoAuthTokenDiscardView.as_view(), name='token-logout'),
     path('jwt/create/', SimpleJWTCreateView.as_view(), name='jwt-create'),

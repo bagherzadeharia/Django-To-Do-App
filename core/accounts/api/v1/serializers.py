@@ -128,3 +128,46 @@ class UserVerificationEmailSerializer(serializers.Serializer):
             attrs['user'] = userObject
             attrs['email'] = email
             return super().validate(attrs)
+
+class ForgetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate(self, attrs):
+        try:
+            email = attrs.get('email')
+            userObject = User.objects.get(
+                email=email
+            )
+        except User.DoesNotExist:
+            raise serializers.ValidationError(
+                {
+                    'details': 'User does not exist',
+                }
+            )
+
+        attrs['user'] = userObject
+        attrs['email'] = email
+        return super().validate(attrs)
+
+class ForgetPasswordConfirmSerializer(serializers.Serializer):
+    new_password = serializers.CharField(required=True, write_only=True)
+    new_password_repeat = serializers.CharField(required=True, write_only=True)
+
+    def validate(self, attrs):
+        if attrs.get('new_password') != attrs.get('new_password_repeat'):
+            raise serializers.ValidationError(
+                {
+                    'detail': 'New password doesn\'t match with its repetition',
+                }
+            )
+
+        try:
+            validate_password(attrs.get('new_password'))
+        except exceptions.ValidationError as e:
+            raise serializers.ValidationError(
+                {
+                    'new_password': list(e.messages),
+                }
+            )
+
+        return super().validate(attrs)

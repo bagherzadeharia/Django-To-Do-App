@@ -82,6 +82,83 @@ class ChangePasswordAPIView(GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+class ForgetPasswordAPIView(GenericAPIView):
+    serializer_class = ForgetPasswordSerializer
+
+    def _get_token(self, user):
+        token = RefreshToken.for_user(user)
+        return token.access_token
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token = self._get_token(user)
+        email = EmailMessage(
+            'email/reset-password.tpl',
+            {
+                'token': token
+            },
+            'admin@admin.com',
+            [user.email]
+        )
+        EmailThread(email).start()
+        return Response(
+            {
+                "details": 'Password Reset email has been sent to your email address'
+            },
+            status=status.HTTP_200_OK
+        )
+
+class ForgetPasswordConfirmAPIView(GenericAPIView):
+    serializer_class = ForgetPasswordConfirmSerializer
+
+    def put(self, request, token, *args, **kwargs):
+        try:
+            decodedToken = AccessToken(token)
+            userID = decodedToken["user_id"]
+        except TokenError as e:
+            print(e.args)
+            return Response(
+                {"detail": "Invalid or expired token"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = User.objects.get(
+            pk=userID
+        )
+
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+        response = {
+            'status': 'Success',
+            'code': status.HTTP_200_OK,
+            'message': 'Password Updated Successfully',
+            'data': []
+        }
+        return Response(response)
+
+    def get(self, request, token, *args, **kwargs):
+        try:
+            decodedToken = AccessToken(token)
+            userID = decodedToken["user_id"]
+        except TokenError as e:
+            print(e.args)
+            return Response(
+                {"detail": "Invalid or expired token"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = User.objects.get(
+            pk=userID
+        )
+
+        return Response(
+            status=status.HTTP_200_OK
+        )
+
 class DjangoAuthTokenView(GenericAPIView):
     serializer_class = DjangoAuthTokenSerializer
 
@@ -125,8 +202,6 @@ class SimpleJWTCreateView(TokenObtainPairView):
 
 class UserVerificationConfirmView(APIView):
     def get(self, request, token, *args, **kwargs):
-        print(args)
-        print(kwargs)
         try:
             decodedToken = AccessToken(token)
             userID = decodedToken["user_id"]
@@ -144,7 +219,7 @@ class UserVerificationConfirmView(APIView):
         if user.is_verified:
             return Response(
                 {
-                    'detail': 'User has already been '
+                    'detail': 'User has already been verified'
                 },
                 status=status.HTTP_200_OK
             )
@@ -153,7 +228,7 @@ class UserVerificationConfirmView(APIView):
             user.save()
             return Response(
                 {
-                    'detail': 'User has been verified & activated successfully'
+                    'detail': 'User has been verified successfully'
                 },
                 status=status.HTTP_200_OK
             )
@@ -172,7 +247,7 @@ class UserVerificationEmailResendView(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         userVerificationToken = self._get_token(user)
-        activationEmail = EmailMessage(
+        verificationEmail = EmailMessage(
             'email/verification-email.tpl',
             {
                 'token': userVerificationToken
@@ -180,5 +255,5 @@ class UserVerificationEmailResendView(APIView):
             'admin@admin.com',
             [user.email]
         )
-        EmailThread(activationEmail).start()
-        return Response({"details": 'Activation email has been sent to your email address'}, status=status.HTTP_200_OK)
+        EmailThread(verificationEmail).start()
+        return Response({"details": 'Verification email has been sent to your email address'}, status=status.HTTP_200_OK)
