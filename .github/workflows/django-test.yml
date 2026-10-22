@@ -31,5 +31,8 @@ jobs:
     - name: Setup docker-compose
       run: docker compose up -d --build
 
+    # - name: Flake8
+    #   run: docker compose exec to-do-app-backend sh -c "flake8"
+
     - name: Tests
       run: docker compose exec to-do-app-backend sh -c "pytest ."
