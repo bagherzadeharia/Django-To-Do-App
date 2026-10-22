@@ -26,6 +26,14 @@ class TaskModelViewSet(ModelViewSet):
         )
 
     def list(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            return Response(
+                {
+                    'detail': 'Unauthorized User',
+                },
+                status=HTTP_401_UNAUTHORIZED
+            )
+
         page = self.paginate_queryset(
             self.filter_queryset(
                 self.get_queryset()
