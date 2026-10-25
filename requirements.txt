@@ -9,6 +9,7 @@ djangorestframework==3.18.1
 djangorestframework_simplejwt==5.5.1
 drf-spectacular==0.30.0
 drf-yasg==1.21.15
+Faker==40.43.0
 flake8==7.4.1
 gunicorn==26.2.0
 importlib_resources==7.1.0
