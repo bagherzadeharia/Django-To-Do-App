@@ -8,10 +8,13 @@ click==8.5.0
 click-didyoumean==0.3.1
 click-plugins==1.1.1.2
 click-repl==0.4.1
+cron-descriptor==1.4.5
 Django==5.2.15
+django-celery-beat==2.9.0
 django-cors-headers==4.9.0
 django-filter==26.1
 django-mail-templated==2.6.5
+django-timezone-field==7.2.2
 djangorestframework==3.18.1
 djangorestframework_simplejwt==5.5.1
 drf-spectacular==0.30.0
@@ -40,6 +43,7 @@ Pygments==2.21.0
 PyJWT==2.15.1
 pytest==9.1.1
 pytest-django==4.14.0
+python-crontab==3.4.0
 python-dateutil==3.0.0
 python-decouple==3.8
 pytokens==0.4.1

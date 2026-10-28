@@ -55,9 +55,22 @@ services:
 
   worker:
     build: .
-    command: celery -A core worker -B --loglevel=info  --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: celery -A core worker --loglevel=info
     volumes:
       - ./core:/app
+      - ./entrypoint.py:/entrypoint.py
+    env_file:
+      - .env
+    depends_on:
+      - redis-to-do-app
+      - to-do-app-backend
+
+  beater:
+    build: .
+    command: celery -A core beat --loglevel=info  --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    volumes:
+      - ./core:/app
+      - ./entrypoint.py:/entrypoint.py
     env_file:
       - .env
     depends_on:

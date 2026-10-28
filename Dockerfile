@@ -23,6 +23,6 @@ USER admin
 
 EXPOSE 8000
 
-# ENTRYPOINT ["python", "/entrypoint.py"]
+ENTRYPOINT ["python", "/entrypoint.py"]
 
 CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
