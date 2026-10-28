@@ -240,3 +240,9 @@ SWAGGER_USE_COMPAT_RENDERERS = False
 #     "x-requested-with",
 # )
 # CSRF_TRUSTED_ORIGINS = []
+
+# Celery Settings
+# https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html
+
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', cast=str)
+# CELERY_BEAT_SCHEDULE = {}
