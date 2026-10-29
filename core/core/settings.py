@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'mail_templated',
     "corsheaders",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -246,3 +247,19 @@ SWAGGER_USE_COMPAT_RENDERERS = False
 
 CELERY_BROKER_URL = config('CELERY_BROKER_URL', cast=str)
 # CELERY_BEAT_SCHEDULE = {}
+
+# Logging
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler"},
+    },
+    "loggers": {
+        "todo": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+    },
+}
