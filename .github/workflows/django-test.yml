@@ -36,4 +36,12 @@ jobs:
     #   run: docker compose exec to-do-app-backend sh -c "flake8"
 
     - name: Tests
-      run: docker compose exec to-do-app-backend sh -c "pytest ."
+      run: docker compose exec -T to-do-app-backend sh -c "pytest todo/tests/test_todo_api.py -x -v -s"
+
+    - name: Debug
+      if: always()
+      run: |
+        docker compose ps -a
+        docker inspect $(docker compose ps -aq to-do-app-backend) --format 'OOM={{.State.OOMKilled}} exit={{.State.ExitCode}} restarts={{.RestartCount}}'
+        docker compose logs --tail=80 to-do-app-backend
+        free -m
