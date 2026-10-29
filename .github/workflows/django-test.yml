@@ -30,7 +30,7 @@ jobs:
         EOF
 
     - name: Setup docker-compose
-      run: docker compose up -d --build
+      run: docker compose up -d --build to-do-app-backend redis-to-do-app
 
     # - name: Flake8
     #   run: docker compose exec to-do-app-backend sh -c "flake8"
