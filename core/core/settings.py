@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'mail_templated',
     "corsheaders",
     "django_celery_beat",
+    "django_redis",
 ]
 
 MIDDLEWARE = [
@@ -83,7 +84,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# Database
+# Database & Cache
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
@@ -93,6 +94,13 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis:6379/2",
+        # "TIMEOUT": 300,
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
