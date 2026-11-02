@@ -1,15 +1,22 @@
 from typing import override
-from todo.models import Task
-from rest_framework.status import *
-from todo.api.v1.permissions import IsOwner
+from rest_framework import status
+from django.core.cache import cache
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from todo.api.v1.paginations import TaskPagination
-from todo.api.v1.serializers import TaskSerializer
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.vary import vary_on_headers
 from rest_framework.viewsets import ViewSet, ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 
+from todo.models import Task
+from todo.api.v1.permissions import IsOwner
+from todo.api.v1.paginations import TaskPagination
+from todo.api.v1.serializers import TaskSerializer
+
+@method_decorator(cache_page(60), name="list")
+@method_decorator(vary_on_headers("Authorization"), name="list")
 class TaskModelViewSet(ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [IsOwner]
@@ -25,26 +32,26 @@ class TaskModelViewSet(ModelViewSet):
             user=self.request.user
         )
 
+    def invalidate_tasks_cache(self, user_id):
+        cache.delete_pattern(f"tasks:list:{user_id}:*")
+
     def list(self, request, *args, **kwargs):
-        if not self.request.user.is_authenticated:
+        try:
+            key = f"tasks:list:{request.user.id}:{request.get_full_path()}"
+        except TypeError:
             return Response(
                 {
-                    'detail': 'Unauthorized User',
+                    'detail': 'Bad Request',
                 },
-                status=HTTP_401_UNAUTHORIZED
+                status=status.HTTP_400_BAD_REQUEST
             )
+        data = cache.get(key)
+        if data is None:
+            response = super().list(request, *args, **kwargs)
+            data = response.data
+            cache.set(key, data, timeout=60)
 
-        page = self.paginate_queryset(
-            self.filter_queryset(
-                self.get_queryset()
-            )
-        )
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = TaskSerializer(tasks, many=True)
-        return Response(serializer.data, status=HTTP_200_OK)
+        return Response(data)
 
     def update(self, request, *args, **kwargs):
         task = Task.objects.get(
@@ -57,12 +64,14 @@ class TaskModelViewSet(ModelViewSet):
                 status=HTTP_403_FORBIDDEN
             )
         else:
+            self.invalidate_tasks_cache(request.user.id)
             return super().update(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=request.user)
+        self.invalidate_tasks_cache(request.user.id)
         return Response(serializer.data, status=HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
@@ -75,6 +84,7 @@ class TaskModelViewSet(ModelViewSet):
                 status=HTTP_403_FORBIDDEN
             )
         else:
+            self.invalidate_tasks_cache(request.user.id)
             return super().destroy(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
