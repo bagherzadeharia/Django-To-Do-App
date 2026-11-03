@@ -40,7 +40,8 @@ schemaView = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
-    path('', include('todo.urls')),
+    path('todo/', include('todo.urls')),
+    path('weather/', include('weather.urls')),
     path('api-auth/', include('rest_framework.urls')),
     # path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),

@@ -30,4 +30,8 @@ class QuickstartUser(HttpUser):
 
     @task
     def get_task_list(self):
-        self.client.get('/api/v1/tasks/')
+        self.client.get('/todo/api/v1/tasks/')
+
+    @task
+    def get_weather_info(self):
+        self.client.get('/weather/api/v1/')

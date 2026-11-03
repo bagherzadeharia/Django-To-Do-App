@@ -4,7 +4,6 @@ from django.core.cache import cache
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.vary import vary_on_headers
 from rest_framework.viewsets import ViewSet, ModelViewSet
@@ -15,11 +14,10 @@ from todo.api.v1.permissions import IsOwner
 from todo.api.v1.paginations import TaskPagination
 from todo.api.v1.serializers import TaskSerializer
 
-@method_decorator(cache_page(60), name="list")
 @method_decorator(vary_on_headers("Authorization"), name="list")
 class TaskModelViewSet(ModelViewSet):
     serializer_class = TaskSerializer
-    permission_classes = [IsOwner]
+    permission_classes = [IsAuthenticated, IsOwner]
 
     filter_backends = [DjangoFilterBackend]
     ordering_fields = ['updated_date']
@@ -36,21 +34,15 @@ class TaskModelViewSet(ModelViewSet):
         cache.delete_pattern(f"tasks:list:{user_id}:*")
 
     def list(self, request, *args, **kwargs):
-        try:
-            key = f"tasks:list:{request.user.id}:{request.get_full_path()}"
-        except TypeError:
-            return Response(
-                {
-                    'detail': 'Bad Request',
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        key = f"tasks:list:{request.user.id}:{request.get_full_path()}"
         data = cache.get(key)
+        print(data)
         if data is None:
             response = super().list(request, *args, **kwargs)
             data = response.data
             cache.set(key, data, timeout=60)
 
+        print(data)
         return Response(data)
 
     def update(self, request, *args, **kwargs):

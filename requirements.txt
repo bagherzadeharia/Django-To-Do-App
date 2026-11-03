@@ -4,6 +4,8 @@ attrs==26.1.0
 billiard==4.3.1
 black==26.10.1
 celery==5.6.3
+certifi==2026.10.23
+charset-normalizer==3.5.2
 click==8.5.0
 click-didyoumean==0.3.1
 click-plugins==1.1.1.2
@@ -23,6 +25,7 @@ drf-yasg==1.21.15
 Faker==40.43.0
 flake8==7.4.1
 gunicorn==26.2.0
+idna==3.20
 importlib_resources==7.1.0
 inflection==0.5.1
 iniconfig==2.3.1
@@ -52,6 +55,7 @@ pytz==2026.4
 PyYAML==6.0.3
 redis==8.1.0
 referencing==0.37.0
+requests==2.34.2
 rpds-py==2026.6.3
 six==1.17.0
 sqlparse==0.6.0
@@ -60,5 +64,6 @@ typing_extensions==4.16.0
 tzdata==2026.3
 tzlocal==5.4.5
 uritemplate==4.2.0
+urllib3==2.8.0
 vine==5.1.0
 wcwidth==0.9.4
