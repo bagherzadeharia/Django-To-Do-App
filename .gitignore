@@ -157,3 +157,4 @@ cython_debug/
 
 # Self-Added
 .gunicorn/
+NOTE.txt
