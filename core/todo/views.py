@@ -35,7 +35,6 @@ class ToDoCheckView(LoginRequiredMixin, UpdateView):
 
     def get(self, request, *args, **kwargs):
         task = get_object_or_404(Task, id=kwargs['id'])
-        print(task)
         if not task.complete:
             task.complete = True
         else:

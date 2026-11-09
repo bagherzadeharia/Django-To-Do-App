@@ -1,8 +1,8 @@
 from django.urls import path, include
-from website.views import *
+from website.views import indexView
 
 app_name = 'website'
 
 urlpatterns = [
-    path('', )
+    path('', indexView, name='index')
 ]

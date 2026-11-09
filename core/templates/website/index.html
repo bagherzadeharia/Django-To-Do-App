@@ -1,0 +1,498 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block internalStyle %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        body::before {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            background: rgba(108, 99, 255, 0.25);
+        }
+        body::after {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -150px;
+            background: rgba(0, 210, 255, 0.15);
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(15, 12, 41, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #6c63ff, #00d2ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .nav-btn {
+            padding: 10px 22px;
+            background: linear-gradient(135deg, #6c63ff 0%, #00d2ff 100%);
+            border-radius: 10px;
+            color: #fff !important;
+            font-weight: 700 !important;
+            box-shadow: 0 4px 15px rgba(108, 99, 255, 0.4);
+            transition: transform 0.2s, box-shadow 0.3s !important;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 99, 255, 0.6);
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero {
+            padding: 100px 40px 80px;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 18px;
+            background: rgba(108, 99, 255, 0.15);
+            border: 1px solid rgba(108, 99, 255, 0.4);
+            border-radius: 30px;
+            color: #a8a3ff;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 22px;
+            letter-spacing: -1.5px;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, #6c63ff, #00d2ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #6c63ff 0%, #00d2ff 100%);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 4px 20px rgba(108, 99, 255, 0.45);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(108, 99, 255, 0.65);
+        }
+
+        .btn-secondary {
+            padding: 15px 35px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .app-preview {
+            max-width: 500px;
+            margin: 60px auto 0;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .preview-title {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .preview-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6c63ff, #00d2ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .preview-task {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .preview-task .dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #6c63ff;
+            flex-shrink: 0;
+        }
+
+        .preview-task.done .dot {
+            background: #00d2ff;
+            border-color: #00d2ff;
+        }
+
+        .preview-task.done span {
+            text-decoration: line-through;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .features {
+            padding: 100px 40px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+            margin-bottom: 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 35px 30px;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(108, 99, 255, 0.4);
+        }
+
+        .feature-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.25), rgba(0, 210, 255, 0.2));
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .cta-section {
+            padding: 80px 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .cta-box {
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.15) 0%, rgba(0, 210, 255, 0.1) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            border-radius: 24px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-box h2 {
+            font-size: 34px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .cta-box p {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        footer {
+            position: relative;
+            z-index: 1;
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #00d2ff;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 15px 20px;
+            }
+            .nav-links a:not(.nav-btn) {
+                display: none;
+            }
+            .hero {
+                padding: 60px 20px 40px;
+            }
+            .hero h1 {
+                font-size: 38px;
+            }
+            .hero p {
+                font-size: 16px;
+            }
+            .section-title {
+                font-size: 28px;
+            }
+            .features,
+            .cta-section {
+                padding: 60px 20px;
+            }
+            .cta-box {
+                padding: 40px 25px;
+            }
+            .cta-box h2 {
+                font-size: 26px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <nav class="navbar">
+        <div class="logo">To-Do</div>
+        <div class="nav-links">
+            <a href="{% url 'todo:list' %}" class="nav-btn">ورود به پنل شخصی</a>
+        </div>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <div class="hero-badge">✨ ساده، سریع، بدون حواس‌پرتی</div>
+            <h1>
+                کارهاتو <span class="gradient-text">منظم</span> کن،<br>
+                زندگیتو راحت‌تر
+            </h1>
+            <p>
+                یه اپ To-Do مینیمال و زیبا برای اینکه همیشه بدونی چی باید انجام بدی. بدون پیچیدگی، بدون شلوغی — فقط تمرکز روی کارهای مهم.
+            </p>
+
+            <div class="app-preview" id="preview">
+                <div class="preview-header">
+                    <div class="preview-title">📋 لیست کارها</div>
+                    <div class="preview-avatar">ع</div>
+                </div>
+                <div class="preview-task done">
+                    <div class="dot"></div>
+                    <span>تماس با مشتری</span>
+                </div>
+                <div class="preview-task">
+                    <div class="dot"></div>
+                    <span>خرید مواد غذایی</span>
+                </div>
+                <div class="preview-task">
+                    <div class="dot"></div>
+                    <span>بررسی ایمیل‌ها</span>
+                </div>
+                <div class="preview-task done">
+                    <div class="dot"></div>
+                    <span>جلسه تیم طراحی</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <h2 class="section-title">چرا ما؟</h2>
+            <p class="section-subtitle">چیزهایی که کار کردن با این اپ رو لذت‌بخش می‌کنه</p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>سریع و سبک</h3>
+                    <p>بدون بارگذاری اضافه، بدون پیچیدگی. کارت رو اضافه کن و برو. همین.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>طراحی مدرن</h3>
+                    <p>تم تیره و شیشه‌ای که چشم‌ها رو اذیت نمی‌کنه و ظاهری شیک داره.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>امن و خصوصی</h3>
+                    <p>داده‌هات فقط مال خودته. احراز هویت امن با جنگو و محافظت کامل.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>ریسپانسیو</h3>
+                    <p>روی موبایل، تبلت و دسکتاپ همون تجربه عالی رو داری.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="cta-box">
+                <h2>آماده‌ای شروع کنی؟</h2>
+                <p>همین حالا ثبت‌نام کن و اولین کارت رو اضافه کن. رایگانه!</p>
+                <a href="{% url 'accounts:signup' %}" class="btn-primary">همین حالا شروع کن</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        ساخته شده با ❤️ توسط تیم To-Do · <a href="#">حریم خصوصی</a> · <a href="#">تماس</a>
+    </footer>
+{% endblock %}

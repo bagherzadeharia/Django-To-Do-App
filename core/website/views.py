@@ -1,4 +1,4 @@
 from django.shortcuts import render
 
 def indexView(request):
-    pass
+    return render(request, 'website/index.html')

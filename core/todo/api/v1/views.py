@@ -49,7 +49,6 @@ class TaskModelViewSet(ModelViewSet):
         task = Task.objects.get(
             pk=kwargs['pk']
         )
-        print(request.user, task.user)
         if request.user != task.user:
             return Response(
                 data={"detail": "Access Denied"},
