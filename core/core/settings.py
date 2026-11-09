@@ -87,12 +87,24 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database & Cache
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("POSTGRES_DB", cast=str),
+            "USER": config("POSTGRES_USER", cast=str),
+            "PASSWORD": config("POSTGRES_PASSWORD", cast=str),
+            "HOST": config("POSTGRES_HOST", cast=str),
+            "PORT": 5432,
+        }
+    }
 
 CACHES = {
     "default": {
@@ -137,13 +149,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 STATICFILES_DIRS = [
-    BASE_DIR / 'staticfiles'
+    BASE_DIR / 'static'
 ]
 
 # Default primary key field type
@@ -271,3 +283,7 @@ LOGGING = {
         },
     },
 }
+
+# Other Configurations
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
