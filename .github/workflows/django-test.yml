@@ -27,6 +27,7 @@ jobs:
         EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }}
         EMAIL_PORT=${{ secrets.EMAIL_PORT }}
         CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}
+        OPENWEATHER_API_KEY=${{ secrets.OPENWEATHER_API_KEY }}
         EOF
 
     - name: Setup docker-compose
@@ -36,7 +37,7 @@ jobs:
     #   run: docker compose exec to-do-app-backend sh -c "flake8"
 
     - name: Tests
-      run: docker compose exec -T to-do-app-backend sh -c "pytest todo/tests/test_todo_api.py -x -v -s"
+      run: docker compose exec to-do-app-backend sh -c "pytest ."
 
     - name: Debug
       if: always()

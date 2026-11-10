@@ -52,7 +52,7 @@ class TaskModelViewSet(ModelViewSet):
         if request.user != task.user:
             return Response(
                 data={"detail": "Access Denied"},
-                status=HTTP_403_FORBIDDEN
+                status=status.HTTP_403_FORBIDDEN
             )
         else:
             self.invalidate_tasks_cache(request.user.id)
@@ -63,7 +63,7 @@ class TaskModelViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save(user=request.user)
         self.invalidate_tasks_cache(request.user.id)
-        return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         task = Task.objects.get(
@@ -72,7 +72,7 @@ class TaskModelViewSet(ModelViewSet):
         if request.user != task.user:
             return Response(
                 data={"detail": "Access Denied"},
-                status=HTTP_403_FORBIDDEN
+                status=status.HTTP_403_FORBIDDEN
             )
         else:
             self.invalidate_tasks_cache(request.user.id)
@@ -85,7 +85,7 @@ class TaskModelViewSet(ModelViewSet):
         if request.user != task.user:
             return Response(
                 data={"detail": "Access Denied"},
-                status=HTTP_403_FORBIDDEN
+                status=status.HTTP_403_FORBIDDEN
             )
         else:
             return super().retrieve(request, *args, **kwargs)

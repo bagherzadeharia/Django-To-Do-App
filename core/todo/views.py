@@ -1,13 +1,11 @@
 from todo.forms import *
-from typing import override
 from todo.models import Task
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.base import TemplateView, RedirectView
-from django.views.generic import CreateView, FormView, DetailView, ListView, UpdateView, DeleteView
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 
 class ToDoListView(LoginRequiredMixin, ListView):
     template_name = 'todo/index.html'
