@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'todo',
+    'weather',
     'rest_framework',
     'rest_framework.authtoken',
     # 'drf_spectacular',
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_celery_beat",
     "django_redis",
+    "requests"
 ]
 
 MIDDLEWARE = [
@@ -109,8 +111,9 @@ else:
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/2",
+        "LOCATION": "redis://redis-to-do-app:6379/2",
         # "TIMEOUT": 300,
+        # "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
     }
 }
 
@@ -283,6 +286,11 @@ LOGGING = {
         },
     },
 }
+
+# Openweather
+# https://openweathermap.org/api
+
+OPENWEATHER_API_KEY=config('OPENWEATHER_API_KEY', cast=str)
 
 # Other Configurations
 
