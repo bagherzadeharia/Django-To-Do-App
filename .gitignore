@@ -144,7 +144,7 @@ cython_debug/
 # JetBrains Related
 .idea/
 .air/
-.junie
+.junie/
 
 # Ruff stuff:
 .ruff_cache/

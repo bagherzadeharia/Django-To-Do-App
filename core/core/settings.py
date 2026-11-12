@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -54,6 +55,8 @@ INSTALLED_APPS = [
     "django_redis",
     "requests"
 ]
+
+SITE_ID = config("SITE_ID", cast=int, default=1)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -100,10 +103,10 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": config("POSTGRES_DB", cast=str),
-            "USER": config("POSTGRES_USER", cast=str),
-            "PASSWORD": config("POSTGRES_PASSWORD", cast=str),
-            "HOST": config("POSTGRES_HOST", cast=str),
+            "NAME": config("PGDB_NAME", cast=str),
+            "USER": config("PGDB_USER", cast=str),
+            "PASSWORD": config("PGDB_PASSWORD", cast=str),
+            "HOST": config("PGDB_HOST", cast=str),
             "PORT": 5432,
         }
     }
@@ -161,12 +164,30 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
 
+# Whitenoise
+
+if config("ENABLE_WHITENOISE", cast=bool, default=False):
+    MIDDLEWARE += [
+        "whitenoise.middleware.WhiteNoiseMiddleware",
+    ]
+    STATICFILES_STORAGE = 'whitenoise.storage.StaticFilesStorage'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/accounts/login/'
+
+# Messages Configuration for Notification Handeling in Pages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: "info",
+    messages.INFO: "info",
+    messages.SUCCESS: "success",
+    messages.WARNING: "warning",
+    messages.ERROR: "danger",
+}
 
 # REST Framework settings
 # https://www.django-rest-framework.org/api-guide/requests/
@@ -291,6 +312,27 @@ LOGGING = {
 # https://openweathermap.org/api
 
 OPENWEATHER_API_KEY=config('OPENWEATHER_API_KEY', cast=str)
+
+# sentry online monitoring
+SENTRY_ENABLE = config("SENTRY_ENABLE", cast=bool, default=False)
+if SENTRY_ENABLE == True:
+    SENTRY_DNS = config("SENTRY_DNS")
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+        dsn=SENTRY_DNS,
+        integrations=[
+            DjangoIntegration(),
+        ],
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+    )
 
 # Other Configurations
 
