@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 
 class ToDoListView(LoginRequiredMixin, ListView):
-    template_name = 'todo/index.html'
+    template_name = 'todo/task-list.html'
     login_url = '/accounts/login'
     context_object_name = 'tasks'
     # queryset = Task.objects.filter(user=request.user)
@@ -89,5 +89,4 @@ class ToDoCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("Invalid")
         return redirect('todo:list')
